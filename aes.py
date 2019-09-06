@@ -1,5 +1,6 @@
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
+from collections import Counter
 
 from fn import *
 
@@ -37,6 +38,18 @@ def unpad(data):
   assert len((set(data[-last:]))) == 1
   return data[:-last]
 
+def ecb_encrypt(key, data):
+  ret = bytearray()
+  for chunk in chunky(pad(data, 16), 16):
+    ret += aes_encrypt_block(key, chunk)
+  return ret
+
+def ecb_decrypt(key, data):
+  ret = bytearray()
+  for chunk in chunky(data, 16):
+    ret += aes_decrypt_block(key, chunk)
+  return unpad(ret)
+
 def cbc_encrypt(key, iv, data):
   ret = bytearray()
   for chunk in chunky(pad(data, 16), 16):
@@ -52,4 +65,13 @@ def cbc_decrypt(key, iv, data):
     iv = chunk
     ret += plain
   return unpad(ret)
+
+# If a block repeats, it's probably ECB mode:
+def check_ecb(data):
+  chunks=list(chunky(data,16))
+  c = Counter(chunks)
+  for f in c:
+    if c[f] > 1:
+      return True
+  return False
 
