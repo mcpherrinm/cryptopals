@@ -1,3 +1,5 @@
+import os
+
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 from collections import Counter
@@ -68,10 +70,13 @@ def cbc_decrypt(key, iv, data):
 
 # If a block repeats, it's probably ECB mode:
 def check_ecb(data):
-  chunks=list(chunky(data,16))
+  chunks=list(chunky(bytes(data),16))
   c = Counter(chunks)
   for f in c:
     if c[f] > 1:
       return True
   return False
 
+# Write a function to generate a random AES key; that's just 16 random bytes.
+def rkey():
+  return os.urandom(16)

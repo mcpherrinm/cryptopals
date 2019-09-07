@@ -8,10 +8,6 @@ from fn import *
 ## An ECB/CBC detection oracle
 # Now that you have ECB and CBC working:
 
-# Write a function to generate a random AES key; that's just 16 random bytes.
-def rkey():
-  return os.urandom(16)
-
 # Write a function that encrypts data under an unknown key --- that is, a
 # function that generates a random key and encrypts under it.
 # The function should look like:
